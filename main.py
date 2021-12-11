@@ -40,6 +40,7 @@ bot = commands.Bot(
 @bot.event
 async def on_ready():
   print(f"{bot.user.name} <- Online")
+  # Deletes the keys (users in database, remove upon hosting bot).
   delete_keys()
 
 @bot.event
