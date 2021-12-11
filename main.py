@@ -22,8 +22,8 @@ def find_key(id):
   
   if i is False:
     return False
-  
 
+db['key1'] = 'key1'
 
 token = os.environ['token']
 prefix = "."
@@ -38,6 +38,7 @@ bot = commands.Bot(
 @bot.event
 async def on_ready():
   print(f"{bot.user.name} <- Online")
+  delete_keys()
 
 @bot.event
 async def on_message(ctx):
@@ -45,12 +46,40 @@ async def on_message(ctx):
     return
 
   guild = bot.get_guild(907412013309894706)
+
   category = discord.utils.get(guild.categories, id=916765823950012527)
+
   viewable_role = discord.utils.get(guild.roles, name="Staff")
 
   # Bot gets dm
   if not ctx.guild:
-    pass
-  
+    # Returning user
+    if find_key(ctx.author.id) is True:
+      channel = bot.get_channel(db[str(ctx.author.id)])
+
+    else:
+      try:
+        print("New User {}".format(ctx.author.name))
+        overwrites = {
+          guild.default_role: discord.PermissionOverwrite(read_messages=False),
+          viewable_role : discord.PermissionOverwrite(read_messages=True)
+        }
+        newchannel = await guild.create_text_channel(f"\
+        {ctx.author.name}-modmail", overwrites=overwrites, category=category)
+
+        db[str(ctx.author.id)] = newchannel.id
+        db[str(newchannel.id)] = ctx.author.id
+
+        channel = bot.get_channel(db[str(ctx.author.id)])
+        embed = discord.Embed(title="New DM", color = Color.random(), timestamp = datetime.utcnow(), description=ctx.content)
+
+        embed.set_footer(icon_url=ctx.author.avatar_url, text='\
+        Sent by {}'.format(ctx.author.name))
+        embed.set_author(name=ctx.author.name, icon_url = ctx.author.avatar_url)
+        await channel.send(embed=embed)
+        await ctx.add_reaction(emoji='✅')
+      except:
+        await ctx.add_reaction(emoji='❌')
+      
 
 bot.run(token)
