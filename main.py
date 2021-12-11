@@ -8,7 +8,9 @@ from datetime import datetime
 from discord.colour import Color
 from replit import db
 
-# from keep_alive import keep_alive
+
+# Make sure you have keep_alive.py created before importing this!
+from keep_alive import keep_alive
 
 def delete_keys():
   for k in db.keys():
