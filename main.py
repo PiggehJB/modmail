@@ -105,7 +105,7 @@ async def on_message(ctx):
       except:
         await ctx.add_reaction(emoji='❌')
       
-  elif find_key(ctx.channel.id) is True:
+   elif find_key(ctx.channel.id) is True and ctx.channel.category == category:
     try:
       user = discord.utils.get(guild.members, id=db[str(ctx.channel.id)])
       if ctx.content == '.close':
